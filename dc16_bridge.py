@@ -1011,6 +1011,17 @@ srv.listen(1)
 log(f"bereit auf {args.ip}: UDP 61000, TCP 50001; REAPER {args.reaper_host}:{args.reaper_port}, "
     f"Feedback auf UDP {args.listen_port}")
 seen = set()
+# Diagnose: gehoert --ip wirklich einem Adapter dieses Rechners? (Der DC16 verbindet sich mit dieser
+# Adresse aus dem Discovery-Paket; stimmt sie nicht, kommt nie eine TCP-Verbindung zustande.)
+try:
+    _t = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    _t.bind((args.ip, 0))
+    _t.close()
+except OSError:
+    log(f"WARNUNG: {args.ip} gehoert zu keinem Netzwerkadapter dieses Rechners! "
+        f"--ip muss die Adapter-IP im DC16-Netz sein (Windows: 'ipconfig').")
+log("Wenn nach 'Discovery beantwortet' keine 'TCP-Verbindung ... angenommen' folgt: "
+    "Firewall (eingehend TCP 50001) oder falsche --ip.")
 
 # Eine einzige Schleife (select, 20 ms): Discovery beantworten (UDP 61000), DC16 annehmen (TCP 50001),
 # OSC von REAPER lesen, Konsole, Farbdatei, periodische Aufgaben (Speichern, Herzschlag, Meter).
@@ -1030,6 +1041,7 @@ while True:
                     log(f"Discovery von {addr[0]} beantwortet")
         elif s is srv:
             c, addr = srv.accept()
+            log(f"TCP-Verbindung vom DC16 ({addr[0]}) angenommen")
             if S["conn"]:
                 drop("(neue Verbindung)")
             c.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)

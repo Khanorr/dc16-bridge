@@ -82,6 +82,30 @@ Empfehlung: in ein `start-dc16.sh` / `.bat` legen, damit `--color-file` nie fehl
 Danach DC16 einschalten. Im Log erscheinen *Discovery beantwortet → DC16 verbunden → Zustandsdump gesendet →
 Seite 0 … geschrieben*. Reihenfolge beim Start egal; die Bridge wartet, bis der DC16 sich meldet.
 
+## Windows-Besonderheiten
+
+- **Netzwerkprofil auf „Privat“ stellen.** Ist das Netz als „Öffentlich“ eingestuft, blockiert die Windows-Firewall auch im LAN
+  eingehende Verbindungen: Der DC16 bekommt seine Discovery-Antwort, kann sich aber nie per TCP verbinden, und die Bridge
+  zeigt nichts. (Einstellungen → Netzwerk und Internet → Ethernet → Netzwerkprofiltyp.)
+- **Firewall-Regeln** (als Administrator), gelten für alle Profile:
+  ```
+  netsh advfirewall firewall add rule name="DC16 Bridge TCP" dir=in action=allow protocol=TCP localport=50001 profile=any
+  netsh advfirewall firewall add rule name="DC16 Bridge UDP" dir=in action=allow protocol=UDP localport=61000 profile=any
+  ```
+- **`--ip` = Adresse des LAN-Adapters** (`ipconfig`). Das Discovery-Paket trägt diese Adresse, der DC16 verbindet sich dorthin. Bei
+  mehreren Adaptern (WLAN, VM-Bridge) die des Netzes nehmen, in dem der DC16 hängt. Die Bridge warnt beim Start, wenn die IP
+  zu keinem Adapter gehört.
+- **DHCP-Netz:** funktioniert, solange Rechner und DC16 im selben Subnetz/VLAN liegen (Discovery ist ein Broadcast). Mit
+  DHCP-Reservierung (MAC-Bindung) bleibt `--ip` stabil; ohne feste Adresse ändert sie sich irgendwann und die Bridge-Option muss angepasst werden.
+- **Log-Hinweis:** Erscheint nach „Discovery … beantwortet“ keine Zeile „TCP-Verbindung vom DC16 … angenommen“, liegt es an
+  Firewall oder falscher `--ip`.
+- **Start-Script** (`start-dc16.bat`), damit `--color-file` und `--ip` nie fehlen:
+  ```
+  @echo off
+  python dc16_bridge.py --ip 192.168.1.50 --color-file "%APPDATA%\REAPER\dc16_colors.txt"
+  pause
+  ```
+
 ## Optionen
 
 | Option | Bedeutung |
