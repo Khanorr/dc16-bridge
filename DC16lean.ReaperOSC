@@ -1,0 +1,22 @@
+DEVICE_TRACK_COUNT 608
+DEVICE_SEND_COUNT 0
+DEVICE_RECEIVE_COUNT 0
+DEVICE_FX_COUNT 0
+DEVICE_FX_PARAM_COUNT 0
+DEVICE_FX_INST_PARAM_COUNT 0
+DEVICE_MARKER_COUNT 0
+DEVICE_REGION_COUNT 0
+DEVICE_TRACK_FOLLOWS DEVICE
+DEVICE_TRACK_BANK_FOLLOWS DEVICE
+MASTER_VU_L n/master/vu/L
+MASTER_VU_R n/master/vu/R
+TRACK_NAME s/track/name s/track/@/name
+TRACK_MUTE b/track/mute b/track/@/mute t/track/mute/toggle t/track/@/mute/toggle
+TRACK_SOLO b/track/solo b/track/@/solo t/track/solo/toggle t/track/@/solo/toggle
+TRACK_SELECT b/track/select b/track/@/select
+TRACK_VU n/track/vu n/track/@/vu
+TRACK_VOLUME f/track/volume/db f/track/@/volume/db
+ACTION i/action s/action/str t/action/@ f/action/@/cc
+DEVICE_TRACK_FOLLOWS s/device/track/follows
+DEVICE_TRACK_BANK_FOLLOWS s/device/track/bank/follows
+MASTER_VOLUME f/master/volume/db
